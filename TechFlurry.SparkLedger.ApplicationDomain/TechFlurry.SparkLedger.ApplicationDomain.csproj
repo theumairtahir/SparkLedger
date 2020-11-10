@@ -4,4 +4,10 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Elements\" />
+    <Folder Include="Enums\" />
+    <Folder Include="EventArgs\" />
+  </ItemGroup>
+
 </Project>
