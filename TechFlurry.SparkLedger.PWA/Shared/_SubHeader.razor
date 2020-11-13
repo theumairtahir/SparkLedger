@@ -1,4 +1,5 @@
-﻿<div class="subheader py-2 py-lg-4  subheader-solid " id="kt_subheader">
+﻿@inject IActivityService ActivityService
+<div class="subheader py-2 py-lg-4  subheader-solid " id="kt_subheader">
     <div class=" container-fluid  d-flex align-items-center justify-content-between flex-wrap flex-sm-nowrap">
         <div class="d-flex align-items-center flex-wrap mr-2">
             <h5 class="text-dark font-weight-bold mt-2 mb-2 mr-5">
@@ -6,27 +7,27 @@
             </h5>
             <div class="subheader-separator subheader-separator-ver mt-2 mb-2 mr-4 bg-gray-200"></div>
 
-            <span class="text-muted font-weight-bold mr-4">#XRS-45670</span>
+            <span class="text-muted font-weight-bold mr-4">@ActivityService.NewCode</span>
 
             <a href="#" class="btn btn-light-warning font-weight-bolder btn-sm">
                 Add New
             </a>
         </div>
         <div class="d-flex align-items-center">
-            <a href="#" class="btn btn-clean  btn-sm font-weight-bold font-size-base mr-1">
+            <a class="btn btn-clean  btn-sm font-weight-bold font-size-base mr-1" @onclick="OnTodayPress">
                 Today
             </a>
-            <a href="#" class="btn btn-clean btn-sm font-weight-bold font-size-base  mr-1">
+            <a class="btn btn-clean btn-sm font-weight-bold font-size-base  mr-1" @onclick="OnMonthPress">
                 Month
             </a>
-            <a href="#" class="btn btn-clean btn-sm font-weight-bold font-size-base mr-1">
+            <a class="btn btn-clean btn-sm font-weight-bold font-size-base mr-1" @onclick="OnYearPress">
                 Year
             </a>
-            <a href="#" class="btn btn-sm btn-light font-weight-bold mr-2" id="kt_dashboard_daterangepicker" data-toggle="tooltip" title="Select dashboard daterange" data-placement="left">
+            <a href="#" class="btn btn-sm btn-light font-weight-bold mr-2" id="kt_dashboard_daterangepicker" data-toggle="tooltip" title="Select timeline daterange" data-placement="left">
                 <span class="text-muted font-size-base font-weight-bold mr-2" id="kt_dashboard_daterangepicker_title">Today</span>
-                <span class="text-primary font-size-base font-weight-bolder" id="kt_dashboard_daterangepicker_date">Aug 16</span>
+                <span class="text-primary font-size-base font-weight-bolder" id="kt_dashboard_daterangepicker_date">@DateTime.Today.ToString("MMM dd")</span>
             </a>
-            <div class="dropdown dropdown-inline" data-toggle="tooltip" title="Quick actions" data-placement="left">
+            @*<div class="dropdown dropdown-inline" data-toggle="tooltip" title="Quick actions" data-placement="left">
                 <a href="#" class="btn btn-sm btn-clean btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="svg-icon svg-icon-success svg-icon-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -93,11 +94,41 @@
                         </li>
                     </ul>
                 </div>
-            </div>
+            </div>*@
         </div>
     </div>
 </div>
 
 @code {
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            ActivityService.OnValueUpdate += OnValueUpdate;
+        }
+        return base.OnAfterRenderAsync(firstRender);
+    }
+}
 
+@functions {
+    void OnTodayPress()
+    {
+        ActivityService.LoadMainActivity(DateTime.Today, DateTime.Now);
+    }
+    void OnYearPress()
+    {
+        ActivityService.LoadMainActivity(DateTime.Today.AddYears(-1), DateTime.Now);
+    }
+    void OnMonthPress()
+    {
+        ActivityService.LoadMainActivity(DateTime.Today.AddMonths(-1), DateTime.Now);
+    }
+    void UpdateUI()
+    {
+        StateHasChanged();
+    }
+    void OnValueUpdate(object sender, OnUpdateEventArgs eventArgs)
+    {
+        UpdateUI();
+    }
 }

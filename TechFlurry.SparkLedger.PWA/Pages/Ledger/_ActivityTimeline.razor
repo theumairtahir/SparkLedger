@@ -1,0 +1,125 @@
+﻿@inject IJSRuntime JSRuntime
+@inject IActivityService Service
+<div class="col-lg-12 col-xxl-4">
+    <!--begin::List Widget 9-->
+    <div class="card card-custom card-stretch gutter-b">
+        <!--begin::Header-->
+        <div class="card-header align-items-center border-0 mt-4">
+            <h3 class="card-title align-items-start flex-column">
+                <span class="font-weight-bolder text-dark"> Activity</span>
+                <span class="text-muted mt-3 font-weight-bold font-size-sm">Total @Service.TotalTransactions Transactions</span>
+            </h3>
+            <!--<div class="card-toolbar">
+                <div class="dropdown dropdown-inline">
+                    <a href="#" class="btn btn-clean btn-hover-light-primary btn-sm btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="ki ki-bold-more-hor"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-md dropdown-menu-right">-->
+            <!--begin::Navigation-->
+            <!--<ul class="navi navi-hover">
+                <li class="navi-header font-weight-bold py-4">
+                    <span class="font-size-lg">Choose Label:</span>
+                    <i class="flaticon2-information icon-md text-muted" data-toggle="tooltip" data-placement="right" title="Click to learn more..."></i>
+                </li>
+                <li class="navi-separator mb-3 opacity-70"></li>
+                <li class="navi-item">
+                    <a href="#" class="navi-link">
+                        <span class="navi-text">
+                            <span class="label label-xl label-inline label-light-success">Customer</span>
+                        </span>
+                    </a>
+                </li>
+                <li class="navi-item">
+                    <a href="#" class="navi-link">
+                        <span class="navi-text">
+                            <span class="label label-xl label-inline label-light-danger">Partner</span>
+                        </span>
+                    </a>
+                </li>
+                <li class="navi-item">
+                    <a href="#" class="navi-link">
+                        <span class="navi-text">
+                            <span class="label label-xl label-inline label-light-warning">Suplier</span>
+                        </span>
+                    </a>
+                </li>
+                <li class="navi-item">
+                    <a href="#" class="navi-link">
+                        <span class="navi-text">
+                            <span class="label label-xl label-inline label-light-primary">Member</span>
+                        </span>
+                    </a>
+                </li>
+                <li class="navi-item">
+                    <a href="#" class="navi-link">
+                        <span class="navi-text">
+                            <span class="label label-xl label-inline label-light-dark">Staff</span>
+                        </span>
+                    </a>
+                </li>
+                <li class="navi-separator mt-3 opacity-70"></li>
+                <li class="navi-footer py-4">
+                    <a class="btn btn-clean font-weight-bold btn-sm" href="#">
+                        <i class="ki ki-plus icon-sm"></i>
+                        Add new
+                    </a>
+                </li>
+            </ul>-->
+            <!--end::Navigation-->
+            <!--</div>
+                </div>
+            </div>-->
+        </div>
+        <!--end::Header-->
+        <!--begin::Body-->
+        <div class="card-body pt-4">
+            <div class="timeline timeline-5 mt-3">
+                @foreach (var item in Service.TimelineActivities)
+                {
+                    <_TimelineActivityRow Model="item"></_TimelineActivityRow>
+                }
+            </div>
+        </div>
+        <!--end: Card Body-->
+    </div>
+    <!--end: Card-->
+    <!--end: List Widget 9-->
+</div>
+@code {
+    static IActivityService _service;
+    protected override void OnInitialized()
+    {
+        _service = Service;
+    }
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Service.OnValueUpdate += OnValueUpdate;
+            Service.Init();
+        }
+        return base.OnAfterRenderAsync(firstRender);
+    }
+}
+
+@functions{
+    [JSInvokable("LoadMainActivityByDate")]
+    public static void OnDateFilterChange(string startDate, string endDate)
+    {
+        DateTime.TryParseExact(startDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture,
+                           System.Globalization.DateTimeStyles.None,
+                           out DateTime sDate);
+        DateTime.TryParseExact(endDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture,
+                           System.Globalization.DateTimeStyles.None,
+                           out DateTime eDate);
+        _service.LoadMainActivity(sDate, eDate);
+    }
+    void UpdateUI()
+    {
+        StateHasChanged();
+    }
+    void OnValueUpdate(object sender, OnUpdateEventArgs eventArgs)
+    {
+        UpdateUI();
+    }
+}

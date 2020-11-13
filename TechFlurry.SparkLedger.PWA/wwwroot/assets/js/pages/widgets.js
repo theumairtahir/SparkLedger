@@ -17,7 +17,7 @@ var KTWidgets = function() {
         function cb(start, end, label) {
             var title = '';
             var range = '';
-
+            DotNet.invokeMethodAsync(AssemblyName, 'LoadMainActivityByDate', start.format('DD/MM/yyyy'), end.format('DD/MM/yyyy'));
             if ((end - start) < 100 || label == 'Today') {
                 title = 'Today:';
                 range = start.format('MMM D');
@@ -4532,7 +4532,8 @@ var KTWidgets = function() {
 
             // Education App
             _initEducationShowMoreBtn();
-        }
+        },
+        initDateRange: _initDaterangepicker
     }
 }();
 
@@ -4541,6 +4542,6 @@ if (typeof module !== 'undefined') {
     module.exports = KTWidgets;
 }
 
-jQuery(document).ready(function() {
-    KTWidgets.init();
-});
+//jQuery(document).ready(function() {
+//    KTWidgets.init();
+//});

@@ -6,7 +6,7 @@ namespace TechFlurry.SparkLedger.Shared.Extentions
     {
         public static string GetPassedTimeSpanFromNow(this DateTime time)
         {
-            string s = time.ToString("dd-mmm-yyyy hh:mm:ss");
+            string s = time.ToString("dd/MMM HH:mm");
             TimeSpan span = DateTime.Now - time;
             var mins = decimal.Round(Convert.ToDecimal(span.TotalMinutes));
             var hrs = decimal.Round(Convert.ToDecimal(span.TotalHours));
@@ -30,11 +30,11 @@ namespace TechFlurry.SparkLedger.Shared.Extentions
             {
                 if (hrs == 1)
                 {
-                    s = "1 hour ago";
+                    s = "1 hr. ago";
                 }
                 else
                 {
-                    s = hrs + " hours ago";
+                    s = hrs + " hrs. ago";
                 }
             }
             else if (days == 1)

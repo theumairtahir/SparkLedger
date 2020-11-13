@@ -81,5 +81,6 @@
 
         // Init Search For Quick Search Offcanvas Panel
         KTLayoutSearchOffcanvas().init('kt_quick_search_offcanvas');
+        KTWidgets.initDateRange();
     });
 }

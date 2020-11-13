@@ -1,0 +1,21 @@
+﻿<!--begin::Item-->
+<div class="timeline-item align-items-end">
+    <!--begin::Label-->
+    <div class="timeline-label @(Model.IsBold?"font-weight-bolder":string.Empty) text-dark-75 font-size-lg">@Model.DateTime</div>
+    <!--end::Label-->
+    <!--begin::Badge-->
+    <div class="timeline-badge">
+        <i class="fa fa-genderless text-@Model.Color icon-xl"></i>
+    </div>
+    <!--end::Badge-->
+    <!--begin::Text-->
+    <div class="@(Model.IsBold?"font-weight-bolder":"font-weight-mormal text-muted") font-size-lg timeline-content pl-3">
+        @Model.Description <a href="#" class="text-primary">@Model.ActivityCode</a>
+    </div>
+    <!--end::Text-->
+</div>
+<!--end::Item-->
+@code {
+    [Parameter]
+    public TimelineActivityModel Model { get; set; }
+}

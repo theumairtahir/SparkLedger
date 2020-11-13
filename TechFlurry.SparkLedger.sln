@@ -11,23 +11,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{08062B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{30664E1B-A535-4CAD-B5B8-7A1E4BE02A3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechFlurry.SparkLedger.PWA", "TechFlurry.SparkLedger.PWA\TechFlurry.SparkLedger.PWA.csproj", "{EC595732-0FF6-430A-8AE2-18E6C44EC946}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechFlurry.SparkLedger.PWA", "TechFlurry.SparkLedger.PWA\TechFlurry.SparkLedger.PWA.csproj", "{EC595732-0FF6-430A-8AE2-18E6C44EC946}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechFlurry.SparkLedger.ClientServices", "TechFlurry.SparkLedger.ClientServices\TechFlurry.SparkLedger.ClientServices.csproj", "{4D0E463A-52A2-4D86-9B28-A8F1032F4CF7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechFlurry.SparkLedger.ClientServices", "TechFlurry.SparkLedger.ClientServices\TechFlurry.SparkLedger.ClientServices.csproj", "{4D0E463A-52A2-4D86-9B28-A8F1032F4CF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechFlurry.SparkLedger.DataServices", "TechFlurry.SparkLedger.DataServices\TechFlurry.SparkLedger.DataServices.csproj", "{4625F9C7-08F7-4CFE-949B-5FDFD918EE9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechFlurry.SparkLedger.DataServices", "TechFlurry.SparkLedger.DataServices\TechFlurry.SparkLedger.DataServices.csproj", "{4625F9C7-08F7-4CFE-949B-5FDFD918EE9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechFlurry.SparkLedger.ApplicationDomain", "TechFlurry.SparkLedger.ApplicationDomain\TechFlurry.SparkLedger.ApplicationDomain.csproj", "{761E298B-105B-4E12-ADED-6B5A5CA859CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechFlurry.SparkLedger.ApplicationDomain", "TechFlurry.SparkLedger.ApplicationDomain\TechFlurry.SparkLedger.ApplicationDomain.csproj", "{761E298B-105B-4E12-ADED-6B5A5CA859CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechFlurry.SparkLedger.BusinessDomain", "TechFlurry.SparkLedger.BusinessDomain\TechFlurry.SparkLedger.BusinessDomain.csproj", "{9304CDC6-8871-40CC-95F4-84FEC5520C06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechFlurry.SparkLedger.BusinessDomain", "TechFlurry.SparkLedger.BusinessDomain\TechFlurry.SparkLedger.BusinessDomain.csproj", "{9304CDC6-8871-40CC-95F4-84FEC5520C06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechFlurry.SparkLedger.Shared", "TechFlurry.SparkLedger.Shared\TechFlurry.SparkLedger.Shared.csproj", "{6125DDF4-1872-462D-B985-1CCB9EB55A81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechFlurry.SparkLedger.Shared", "TechFlurry.SparkLedger.Shared\TechFlurry.SparkLedger.Shared.csproj", "{6125DDF4-1872-462D-B985-1CCB9EB55A81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechFlurry.SparkLedger.Validations", "TechFlurry.SparkLedger.Validations\TechFlurry.SparkLedger.Validations.csproj", "{E0F7222E-9F37-47DF-90D7-289E552A2ED0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechFlurry.SparkLedger.Validations", "TechFlurry.SparkLedger.Validations\TechFlurry.SparkLedger.Validations.csproj", "{E0F7222E-9F37-47DF-90D7-289E552A2ED0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechFlurry.SparkLedger.DataAccess", "TechFlurry.SparkLedger.DataAccess\TechFlurry.SparkLedger.DataAccess.csproj", "{75173968-8915-4DE7-808A-82F1896E6ECD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechFlurry.SparkLedger.DataAccess", "TechFlurry.SparkLedger.DataAccess\TechFlurry.SparkLedger.DataAccess.csproj", "{75173968-8915-4DE7-808A-82F1896E6ECD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechFlurry.SparkLedger.RestAPI", "TechFlurry.SparkLedger.RestAPI\TechFlurry.SparkLedger.RestAPI.csproj", "{BF1D1C82-9231-4301-B4B5-AE4E24D64E96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TechFlurry.SparkLedger.RestAPI", "TechFlurry.SparkLedger.RestAPI\TechFlurry.SparkLedger.RestAPI.csproj", "{BF1D1C82-9231-4301-B4B5-AE4E24D64E96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
