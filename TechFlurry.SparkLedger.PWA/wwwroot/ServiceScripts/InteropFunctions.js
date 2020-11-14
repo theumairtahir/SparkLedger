@@ -227,9 +227,30 @@ function showConfirmAlert(title, message, confirmButtonText, cancelButtonText, c
         }
     });
 }
-
+function showSuccessAlert(title, message, confirmButtonText, cancelButtonText, callback, cancelCallback = "") {
+    Swal.fire({
+        title: title,
+        text: message,
+        icon: "success",
+        showCancelButton: false,
+        confirmButtonText: confirmButtonText,
+        reverseButtons: true,
+        cancelButtonText: cancelButtonText,
+    });
+}
+function showErrorAlert(title, message, confirmButtonText, cancelButtonText, callback, cancelCallback = "") {
+    Swal.fire({
+        title: title,
+        text: message,
+        icon: "error",
+        showCancelButton: false,
+        confirmButtonText: confirmButtonText,
+        reverseButtons: true,
+        cancelButtonText: cancelButtonText,
+    });
+}
 function invokeMethod(method) {
-    DotNet.invokeMethodAsync('StoreManagerApp', method);
+    DotNet.invokeMethodAsync('TechFlurry.SparkLedger.PWA', method);
 }
 
 function showSuccessMessage(title, message) {

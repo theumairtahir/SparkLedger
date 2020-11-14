@@ -82,5 +82,26 @@
         // Init Search For Quick Search Offcanvas Panel
         KTLayoutSearchOffcanvas().init('kt_quick_search_offcanvas');
         KTWidgets.initDateRange();
+
+        
+
     });
+}
+
+function initFirebase() {
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    var firebaseConfig = {
+        apiKey: "AIzaSyDEaRskZTE79ENGuP0dJByqOxnsODKfNrk",
+        authDomain: "sparkledger.firebaseapp.com",
+        databaseURL: "https://sparkledger.firebaseio.com",
+        projectId: "sparkledger",
+        storageBucket: "sparkledger.appspot.com",
+        messagingSenderId: "133399124583",
+        appId: "1:133399124583:web:36ea48601e3c8b547a52c2",
+        measurementId: "G-TTPSPH0GN4"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
 }

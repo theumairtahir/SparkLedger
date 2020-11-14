@@ -1,7 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using TechFlurry.SparkLedger.ClientServices.Core;
 
 namespace TechFlurry.SparkLedger.ClientServices.Infrastructure
@@ -12,6 +9,7 @@ namespace TechFlurry.SparkLedger.ClientServices.Infrastructure
         {
             //set up client side services
             services.AddScoped<IActivityService, ActivityService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
         }
     }
 }

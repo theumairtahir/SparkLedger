@@ -1,0 +1,23 @@
+﻿@inject IAuthenticationService AuthService
+<div class="form-group fv-plugins-icon-container">
+    <label class="font-size-h6 font-weight-bolder text-dark">First Name</label>
+    <input @bind-value="AuthService.UserFirstName" type="text" class="form-control h-auto py-7 px-6 border-0 rounded-lg font-size-h6" name="fname" placeholder="First Name">
+    <div class="fv-plugins-message-container"></div>
+</div>
+<div class="form-group fv-plugins-icon-container">
+    <label class="font-size-h6 font-weight-bolder text-dark">Last Name</label>
+    <input @bind-value="AuthService.UserSecondName" type="text" class="form-control h-auto py-7 px-6 border-0 rounded-lg font-size-h6" name="lname" placeholder="Last Name">
+    <div class="fv-plugins-message-container"></div>
+</div>
+<div class="pb-lg-0 pb-5">
+    <button type="button" id="kt_login_singin_form_submit_button" class="btn btn-primary font-weight-bolder font-size-h6 px-8 py-4 my-3 mr-3" @onclick="OnSubmit">Submit</button>
+</div>
+@code {
+
+}
+@functions{
+    void OnSubmit()
+    {
+        AuthService.SubmitUser();
+    }
+}

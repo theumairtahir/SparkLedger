@@ -1,0 +1,13 @@
+﻿@inject IAuthenticationService AuthService
+<h4 class="font-weight-bolder mb-3">
+    Account Information:
+</h4>
+
+<div class="text-dark-50 font-weight-bold line-height-lg mb-8">
+    <div>@AuthService.UserFirstName @AuthService.UserSecondName</div>
+    <div>@AuthService.Phone</div>
+</div>
+
+@code{
+
+}
