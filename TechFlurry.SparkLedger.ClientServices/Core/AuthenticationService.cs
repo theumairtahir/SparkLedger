@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using TechFlurry.SparkLedger.ApplicationDomain.EventArgs;
+using TechFlurry.SparkLedger.BusinessDomain.ViewModels;
 using TechFlurry.SparkLedger.ClientServices.Abstractions;
+using TechFlurry.SparkLedger.Shared.Extentions;
+using TechFlurry.SparkLedger.Shared.Helpers;
 
 namespace TechFlurry.SparkLedger.ClientServices.Core
 {
@@ -15,11 +18,14 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
         string UserFirstName { get; set; }
         string UserSecondName { get; set; }
         string UserImage { get; }
+        string Token { get; }
 
         event EventHandler<AuthenticationEventArgs> OnAuthenticated;
         event EventHandler<AuthenticationEventArgs> OnLogout;
+        event EventHandler<ApplicationEventArgs> OnTokenGenerated;
 
-        void AuthenticateUser(string userId);
+        void AuthenticateUser(string token);
+        void InitializeAuthentication(string token);
         void Logout();
         void NextAuthenticationStep();
         void SubmitUser();
@@ -39,6 +45,7 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
         public string UserImage { get; private set; }
         public string UserSecondName { get; set; }
         public int VerificationStep { get; private set; }
+        public string Token { get; private set; }
         public bool IsAuthenticated
         {
             get
@@ -93,17 +100,41 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
         }
 
         public event EventHandler<OnUpdateEventArgs> OnValueUpdate;
+        public event EventHandler<ApplicationEventArgs> OnTokenGenerated;
         public event EventHandler<AuthenticationEventArgs> OnAuthenticated;
         public event EventHandler<AuthenticationEventArgs> OnLogout;
         public void AuthenticateUser(string userId)
         {
             UserId = userId;
-            //find uId in db, if found then return the user and jump to verification step 4 else take the new user Info
+            //find uId in db, if found then return the user and jump to verification step 4 and generate token else take the new user Info
             VerificationStep++;
             OnValueUpdate.Invoke(this, new OnUpdateEventArgs
             {
                 CallerType = GetType(),
                 CallingMethod = nameof(InitializeAuthentication),
+                CallingObject = this
+            });
+            //GenerateToken();
+        }
+        public void GenerateToken()
+        {
+            var userInfo = new UserInfoModel
+            {
+                FullName = new BusinessDomain.ValueObjects.Name
+                {
+                    FirstName = UserFirstName,
+                    LastName = UserSecondName
+                },
+                PhoneNumber = Phone,
+                PicPath = UserImage,
+                UserId = UserId
+            };
+            var json = userInfo.ToJson();
+            Token = Cryptography.Encrypt(json);
+            OnTokenGenerated.Invoke(this, new ApplicationEventArgs
+            {
+                CallerType = GetType(),
+                CallingMethod = nameof(GenerateToken),
                 CallingObject = this
             });
         }
@@ -117,17 +148,23 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
                 CallingObject = this
             });
         }
-        public void InitializeAuthentication(string uId)
+        public void InitializeAuthentication(string token)
         {
-            UserId = uId;
-            UserImage = "assets/media/users/300_21.jpg";
-            IsAuthenticated = true;
-            OnValueUpdate.Invoke(this, new OnUpdateEventArgs
+            try
             {
-                CallerType = GetType(),
-                CallingMethod = nameof(AuthenticateUser),
-                CallingObject = this
-            });
+                var json = Cryptography.Decrypt(token);
+                var userInfo = json.ToObject<UserInfoModel>();
+                UserId = userInfo.UserId;
+                UserImage = userInfo.PicPath;
+                Phone = userInfo.PhoneNumber;
+                UserFirstName = userInfo.FullName.FirstName;
+                UserSecondName = userInfo.FullName.LastName;
+                IsAuthenticated = true;
+            }
+            catch (Exception)
+            {
+                IsAuthenticated = false;
+            }
         }
         public void SubmitUser()
         {
@@ -139,6 +176,7 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
                 CallingMethod = nameof(SubmitUser),
                 CallingObject = this
             });
+            GenerateToken();
         }
         public void Logout()
         {

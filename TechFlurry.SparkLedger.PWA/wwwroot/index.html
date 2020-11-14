@@ -32,8 +32,8 @@
     <app>Downloading the application...</app>
 
     <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_content/TG.Blazor.IndexedDB/indexedDb.Blazor.js"></script>
     <script>navigator.serviceWorker.register('service-worker.js');</script>
-
     <script>
         var AssemblyName = "TechFlurry.SparkLedger.PWA";
         var KTAppSettings = {
@@ -116,10 +116,11 @@
     <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-analytics.js"></script>
     <!-- Add Firebase products that you want to use -->
     <script src="https://www.gstatic.com/firebasejs/8.0.1/firebase-auth.js"></script>
-    
+
     <script src="ServiceScripts/initializer.js"></script>
     <script src="ServiceScripts/InteropFunctions.js"></script>
     <script src="ServiceScripts/authentication.js"></script>
+    <!--<script src="ServiceScripts/indexed-db.js"></script>-->
 </body>
 
 </html>

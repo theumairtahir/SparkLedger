@@ -1,5 +1,6 @@
 ﻿@inject IJSRuntime JSRuntime
 @inject IAuthenticationService AuthService
+@inject IndexedDBManager DbManager
 <div class="d-flex flex-column flex-root">
     <!--begin::Login-->
     <div class="login login-3 wizard d-flex flex-column flex-lg-row flex-column-fluid">
@@ -18,152 +19,152 @@
                         <!--begin::Wizard Step 1 Nav-->
                         @if (AuthService.VerificationStep == 1)
                         {
-            <div class="wizard-step" data-wizard-type="step" data-wizard-state="current">
-                <div class="wizard-wrapper">
-                    <div class="wizard-icon">
-                        <i class="wizard-check ki ki-check"></i>
-                        <span class="wizard-number">1</span>
-                    </div>
-                    <div class="wizard-label">
-                        <h3 class="wizard-title">
-                            Register
-                        </h3>
-                        <div class="wizard-desc">
-                            Send your phone number
-                        </div>
-                    </div>
-                </div>
-            </div> }
-        else
-        {
-<div class="wizard-step" data-wizard-type="step" data-wizard-state="done">
-    <div class="wizard-wrapper">
-        <div class="wizard-icon">
-            <i class="wizard-check ki ki-check"></i>
-            <span class="wizard-number">1</span>
-        </div>
-        <div class="wizard-label">
-            <h3 class="wizard-title">
-                Register
-            </h3>
-            <div class="wizard-desc">
-                Send your phone number
-            </div>
-        </div>
-    </div>
-</div>}
+                            <div class="wizard-step" data-wizard-type="step" data-wizard-state="current">
+                                <div class="wizard-wrapper">
+                                    <div class="wizard-icon">
+                                        <i class="wizard-check ki ki-check"></i>
+                                        <span class="wizard-number">1</span>
+                                    </div>
+                                    <div class="wizard-label">
+                                        <h3 class="wizard-title">
+                                            Register
+                                        </h3>
+                                        <div class="wizard-desc">
+                                            Send your phone number
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> }
+                        else
+                        {
+                            <div class="wizard-step" data-wizard-type="step" data-wizard-state="done">
+                                <div class="wizard-wrapper">
+                                    <div class="wizard-icon">
+                                        <i class="wizard-check ki ki-check"></i>
+                                        <span class="wizard-number">1</span>
+                                    </div>
+                                    <div class="wizard-label">
+                                        <h3 class="wizard-title">
+                                            Register
+                                        </h3>
+                                        <div class="wizard-desc">
+                                            Send your phone number
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>}
                         <!--end::Wizard Step 1 Nav-->
                         <!--begin::Wizard Step 2 Nav-->
                         @if (AuthService.VerificationStep < 2)
                         {
-            <div class="wizard-step" data-wizard-type="step" data-wizard-state="pending">
-                <div class="wizard-wrapper">
-                    <div class="wizard-icon">
-                        <i class="wizard-check ki ki-check"></i>
-                        <span class="wizard-number">2</span>
-                    </div>
-                    <div class="wizard-label">
-                        <h3 class="wizard-title">
-                            Authentication
-                        </h3>
-                        <div class="wizard-desc">
-                            Verify your phone number
-                        </div>
-                    </div>
-                </div>
-            </div> }
-        else if (AuthService.VerificationStep == 2)
-        {
-<div class="wizard-step" data-wizard-type="step" data-wizard-state="current">
-    <div class="wizard-wrapper">
-        <div class="wizard-icon">
-            <i class="wizard-check ki ki-check"></i>
-            <span class="wizard-number">2</span>
-        </div>
-        <div class="wizard-label">
-            <h3 class="wizard-title">
-                Authentication
-            </h3>
-            <div class="wizard-desc">
-                Verify your phone number
-            </div>
-        </div>
-    </div>
-</div> }
-else
-{
-<div class="wizard-step" data-wizard-type="step" data-wizard-state="done">
-    <div class="wizard-wrapper">
-        <div class="wizard-icon">
-            <i class="wizard-check ki ki-check"></i>
-            <span class="wizard-number">2</span>
-        </div>
-        <div class="wizard-label">
-            <h3 class="wizard-title">
-                Authentication
-            </h3>
-            <div class="wizard-desc">
-                Verify your phone number
-            </div>
-        </div>
-    </div>
-</div>}
+                            <div class="wizard-step" data-wizard-type="step" data-wizard-state="pending">
+                                <div class="wizard-wrapper">
+                                    <div class="wizard-icon">
+                                        <i class="wizard-check ki ki-check"></i>
+                                        <span class="wizard-number">2</span>
+                                    </div>
+                                    <div class="wizard-label">
+                                        <h3 class="wizard-title">
+                                            Authentication
+                                        </h3>
+                                        <div class="wizard-desc">
+                                            Verify your phone number
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> }
+                        else if (AuthService.VerificationStep == 2)
+                        {
+                            <div class="wizard-step" data-wizard-type="step" data-wizard-state="current">
+                                <div class="wizard-wrapper">
+                                    <div class="wizard-icon">
+                                        <i class="wizard-check ki ki-check"></i>
+                                        <span class="wizard-number">2</span>
+                                    </div>
+                                    <div class="wizard-label">
+                                        <h3 class="wizard-title">
+                                            Authentication
+                                        </h3>
+                                        <div class="wizard-desc">
+                                            Verify your phone number
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> }
+                        else
+                        {
+                            <div class="wizard-step" data-wizard-type="step" data-wizard-state="done">
+                                <div class="wizard-wrapper">
+                                    <div class="wizard-icon">
+                                        <i class="wizard-check ki ki-check"></i>
+                                        <span class="wizard-number">2</span>
+                                    </div>
+                                    <div class="wizard-label">
+                                        <h3 class="wizard-title">
+                                            Authentication
+                                        </h3>
+                                        <div class="wizard-desc">
+                                            Verify your phone number
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>}
                         <!--end::Wizard Step 2 Nav-->
                         <!--begin::Wizard Step 3 Nav-->
                         @if (AuthService.VerificationStep < 3)
                         {
-            <div class="wizard-step" data-wizard-type="step" data-wizard-state="pending">
-                <div class="wizard-wrapper">
-                    <div class="wizard-icon">
-                        <i class="wizard-check ki ki-check"></i>
-                        <span class="wizard-number">3</span>
-                    </div>
-                    <div class="wizard-label">
-                        <h3 class="wizard-title">
-                            Information
-                        </h3>
-                        <div class="wizard-desc">
-                            Add your personal information
-                        </div>
-                    </div>
-                </div>
-            </div> }
-        else if (AuthService.VerificationStep == 3)
-        {
-<div class="wizard-step" data-wizard-type="step" data-wizard-state="current">
-    <div class="wizard-wrapper">
-        <div class="wizard-icon">
-            <i class="wizard-check ki ki-check"></i>
-            <span class="wizard-number">3</span>
-        </div>
-        <div class="wizard-label">
-            <h3 class="wizard-title">
-                Information
-            </h3>
-            <div class="wizard-desc">
-                Add your personal information
-            </div>
-        </div>
-    </div>
-</div> }
-else
-{
-<div class="wizard-step" data-wizard-type="step" data-wizard-state="done">
-    <div class="wizard-wrapper">
-        <div class="wizard-icon">
-            <i class="wizard-check ki ki-check"></i>
-            <span class="wizard-number">3</span>
-        </div>
-        <div class="wizard-label">
-            <h3 class="wizard-title">
-                Information
-            </h3>
-            <div class="wizard-desc">
-                Add your personal information
-            </div>
-        </div>
-    </div>
-</div>}
+                            <div class="wizard-step" data-wizard-type="step" data-wizard-state="pending">
+                                <div class="wizard-wrapper">
+                                    <div class="wizard-icon">
+                                        <i class="wizard-check ki ki-check"></i>
+                                        <span class="wizard-number">3</span>
+                                    </div>
+                                    <div class="wizard-label">
+                                        <h3 class="wizard-title">
+                                            Information
+                                        </h3>
+                                        <div class="wizard-desc">
+                                            Add your personal information
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> }
+                        else if (AuthService.VerificationStep == 3)
+                        {
+                            <div class="wizard-step" data-wizard-type="step" data-wizard-state="current">
+                                <div class="wizard-wrapper">
+                                    <div class="wizard-icon">
+                                        <i class="wizard-check ki ki-check"></i>
+                                        <span class="wizard-number">3</span>
+                                    </div>
+                                    <div class="wizard-label">
+                                        <h3 class="wizard-title">
+                                            Information
+                                        </h3>
+                                        <div class="wizard-desc">
+                                            Add your personal information
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> }
+                        else
+                        {
+                            <div class="wizard-step" data-wizard-type="step" data-wizard-state="done">
+                                <div class="wizard-wrapper">
+                                    <div class="wizard-icon">
+                                        <i class="wizard-check ki ki-check"></i>
+                                        <span class="wizard-number">3</span>
+                                    </div>
+                                    <div class="wizard-label">
+                                        <h3 class="wizard-title">
+                                            Information
+                                        </h3>
+                                        <div class="wizard-desc">
+                                            Add your personal information
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>}
                         <!--end::Wizard Step 3 Nav-->
                     </div>
                     <!--end::Wizard Steps-->
@@ -204,12 +205,12 @@ else
                         @switch (AuthService.VerificationStep)
                         {
                             case 1:
-            <_Step1></_Step1> break;
-        case 2:
-<_Step2></_Step2>break;
-case 3:
-<_Step3></_Step3>break;
-}
+                                <_Step1></_Step1> break;
+                            case 2:
+                                <_Step2></_Step2>break;
+                            case 3:
+                                <_Step3></_Step3>break;
+                        }
                     </form>
                     <!--end::Form-->
                 </div>
@@ -223,22 +224,26 @@ case 3:
 </div>
 
 @code { private static IAuthenticationService _service;
+    private static IndexedDBManager _dbManager;
+    private static IJSRuntime _jsRuntime;
     protected override void OnInitialized()
     {
         base.OnInitialized();
         _service = AuthService;
+        _dbManager = DbManager;
     }
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             AuthService.OnValueUpdate += OnValueUpdate;
+            AuthService.OnTokenGenerated += SaveToken;
         }
         return base.OnAfterRenderAsync(firstRender);
-    } 
     }
+}
 
-@functions{ 
+@functions{
     [JSInvokable("VerificationSentSuccessfully")]
     public static void VerificationSentSuccessfully()
     {
@@ -249,6 +254,20 @@ case 3:
     {
         _service.AuthenticateUser(uId);
     }
+    async void SaveToken(object sender, ApplicationEventArgs eventArgs)
+    {
+        var newRecord = new StoreRecord<Token>
+        {
+            Storename = "Tokens",
+            Data = new Token
+            {
+                Id = 1,
+                Value = AuthService.Token
+            }
+        };
+        await _dbManager.ClearStore("Tokens");
+        await _dbManager.AddRecord(newRecord);
+    }
     public void OnValueUpdate(object sender, OnUpdateEventArgs eventArgs)
     {
         UpdateUI();
@@ -256,5 +275,5 @@ case 3:
     private void UpdateUI()
     {
         StateHasChanged();
-    } 
     }
+}
