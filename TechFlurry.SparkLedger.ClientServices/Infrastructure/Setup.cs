@@ -10,6 +10,8 @@ namespace TechFlurry.SparkLedger.ClientServices.Infrastructure
             //set up client side services
             services.AddScoped<IActivityService, ActivityService>();
             services.AddScoped<IAuthenticationService, AuthenticationService>();
+            services.AddScoped<IMenuService, MenuService>();
+            services.AddScoped<ILedgerItemService, LedgerItemService>();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿@page "/"
 @inject IJSRuntime JSRuntime
+@inject IMenuService MenuService
 <div class="row">
     <_ActivityTimeline></_ActivityTimeline>
 </div>
@@ -8,6 +9,7 @@
 @code{
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
+        MenuService.ChangeActiveTab(1);
         if (firstRender)
         {
             JSRuntime.InvokeVoidAsync("appReady");
