@@ -9,19 +9,19 @@
 
             <span class="text-muted font-weight-bold mr-4">@ActivityService.NewCode</span>
 
-            <a href="#" class="btn btn-light-warning font-weight-bolder btn-sm">
+            <a href="/CreateNewActivity" class="btn btn-light-warning font-weight-bolder btn-sm">
                 Add New
             </a>
         </div>
         <div class="d-flex align-items-center">
-            <a class="btn btn-clean  btn-sm font-weight-bold font-size-base mr-1" @onclick="OnTodayPress">
-                Today
+            <a href="#" class="btn btn-clean  btn-sm font-weight-bold font-size-base mr-1" @onclick="OnAllPress">
+                All
             </a>
-            <a class="btn btn-clean btn-sm font-weight-bold font-size-base  mr-1" @onclick="OnMonthPress">
-                Month
+            <a href="#" class="btn btn-clean btn-sm font-weight-bold font-size-base  mr-1" @onclick="OnCurrencyPress">
+                Currency
             </a>
-            <a class="btn btn-clean btn-sm font-weight-bold font-size-base mr-1" @onclick="OnYearPress">
-                Year
+            <a href="#" class="btn btn-clean btn-sm font-weight-bold font-size-base mr-1" @onclick="OnGoodsPress">
+                Goods
             </a>
             <a href="#" class="btn btn-sm btn-light font-weight-bold mr-2" id="kt_dashboard_daterangepicker" data-toggle="tooltip" title="Select timeline daterange" data-placement="left">
                 <span class="text-muted font-size-base font-weight-bold mr-2" id="kt_dashboard_daterangepicker_title">Today</span>
@@ -111,17 +111,17 @@
 }
 
 @functions {
-    void OnTodayPress()
+    void OnAllPress()
     {
         ActivityService.LoadMainActivity(DateTime.Today, DateTime.Now);
     }
-    void OnYearPress()
+    void OnGoodsPress()
     {
-        ActivityService.LoadMainActivity(DateTime.Today.AddYears(-1), DateTime.Now);
+        ActivityService.LoadMainActivity(DateTime.Today.AddYears(-1), DateTime.Now, LedgerCategories.Goods);
     }
-    void OnMonthPress()
+    void OnCurrencyPress()
     {
-        ActivityService.LoadMainActivity(DateTime.Today.AddMonths(-1), DateTime.Now);
+        ActivityService.LoadMainActivity(DateTime.Today.AddMonths(-1), DateTime.Now, LedgerCategories.Currency);
     }
     void UpdateUI()
     {
