@@ -1,11 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using TechFlurry.SparkLedger.ApplicationDomain.Elements;
 using TechFlurry.SparkLedger.ApplicationDomain.EventArgs;
 using TechFlurry.SparkLedger.BusinessDomain.ViewModels;
 using TechFlurry.SparkLedger.ClientServices.Abstractions;
+using TechFlurry.SparkLedger.Shared.Common;
 using TechFlurry.SparkLedger.Shared.Extentions;
 using TechFlurry.SparkLedger.Shared.Helpers;
+using TG.Blazor.IndexedDB;
 
 namespace TechFlurry.SparkLedger.ClientServices.Core
 {
@@ -25,6 +27,7 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
         event EventHandler<ApplicationEventArgs> OnTokenGenerated;
 
         void AuthenticateUser(string token);
+        void CheckAuthentication();
         void InitializeAuthentication(string token);
         void Logout();
         void NextAuthenticationStep();
@@ -34,10 +37,13 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
     internal class AuthenticationService : IAuthenticationService
     {
         private bool isAuthenticated;
-        public AuthenticationService()
+        private readonly IndexedDBManager _dbManager;
+
+        public AuthenticationService(IndexedDBManager dbManager)
         {
             isAuthenticated = false;
             VerificationStep = 1;
+            _dbManager = dbManager;
         }
         public string UserId { get; private set; }
         public string Phone { get; set; }
@@ -131,12 +137,21 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
             };
             var json = userInfo.ToJson();
             Token = Cryptography.Encrypt(json);
-            OnTokenGenerated.Invoke(this, new ApplicationEventArgs
+            Functions.RunOnThread(SaveTokenToLocalDb);
+        }
+        private async void SaveTokenToLocalDb()
+        {
+            var newRecord = new StoreRecord<Token>
             {
-                CallerType = GetType(),
-                CallingMethod = nameof(GenerateToken),
-                CallingObject = this
-            });
+                Storename = "Tokens",
+                Data = new Token
+                {
+                    Id = 1,
+                    Value = Token
+                }
+            };
+            await _dbManager.ClearStore("Tokens");
+            await _dbManager.AddRecord(newRecord);
         }
         public void NextAuthenticationStep()
         {
@@ -164,6 +179,14 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
             catch (Exception)
             {
                 IsAuthenticated = false;
+            }
+        }
+        public async void CheckAuthentication()
+        {
+            var token = (await _dbManager.GetRecords<Token>("Tokens")).FirstOrDefault();
+            if (token != null)
+            {
+                InitializeAuthentication(token.Value);
             }
         }
         public void SubmitUser()

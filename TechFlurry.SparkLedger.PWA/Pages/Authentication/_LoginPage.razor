@@ -237,7 +237,6 @@
         if (firstRender)
         {
             AuthService.OnValueUpdate += OnValueUpdate;
-            AuthService.OnTokenGenerated += SaveToken;
         }
         return base.OnAfterRenderAsync(firstRender);
     }
@@ -253,20 +252,6 @@
     public static void AuthenticateUser(string uId)
     {
         _service.AuthenticateUser(uId);
-    }
-    async void SaveToken(object sender, ApplicationEventArgs eventArgs)
-    {
-        var newRecord = new StoreRecord<Token>
-        {
-            Storename = "Tokens",
-            Data = new Token
-            {
-                Id = 1,
-                Value = AuthService.Token
-            }
-        };
-        await _dbManager.ClearStore("Tokens");
-        await _dbManager.AddRecord(newRecord);
     }
     public void OnValueUpdate(object sender, OnUpdateEventArgs eventArgs)
     {

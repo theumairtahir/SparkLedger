@@ -49,17 +49,9 @@ else
         {
             JSRuntime.InvokeVoidAsync("initFirebase");
             AuthService.OnValueUpdate += OnValueUpdate;
-            CheckAuthentication();
+            AuthService.CheckAuthentication();
         }
         return base.OnAfterRenderAsync(firstRender);
-    }
-    async void CheckAuthentication()
-    {
-        var token = (await DbManager.GetRecords<Token>("Tokens")).FirstOrDefault();
-        if (token != null)
-        {
-            AuthService.InitializeAuthentication(token.Value);
-        }
     }
     public void OnValueUpdate(object sender, OnUpdateEventArgs eventArgs)
     {
