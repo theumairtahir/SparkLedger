@@ -64,6 +64,14 @@
                             <div class="fv-help-block">@(!IsValueValid() ? "A non-negtive value is required" : "")</div>
                         </div>
                     </div>
+                    <div class="form-group @(IsDescriptionValid()?"has-success":"has-danger")">
+                        <label>Description:</label>
+                        <input @bind-value="transDescription" class="form-control form-control-solid no-arrows @(IsDescriptionValid()?"is-valid":"is-invalid")" placeholder="Enter transaction description" type="text">
+                        <span class="form-text text-muted">Please enter the value</span>
+                        <div class="fv-plugins-message-container">
+                            <div class="fv-help-block">@(!IsDescriptionValid() ? "A non-negtive value is required" : "")</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer">
                     @{
@@ -80,6 +88,7 @@
     long? accountId, transactionItem;
     TransactionType transactionType = TransactionType.In;
     decimal transValue = 0;
+    string transDescription;
     ElementReference form;
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
@@ -98,7 +107,7 @@
 @functions{
     bool GetFormValidation()
     {
-        return IsAccountIdValid() && IsTransItemValid() && IsTransTypeValid() && IsValueValid();
+        return IsAccountIdValid() && IsTransItemValid() && IsTransTypeValid() && IsValueValid() && IsDescriptionValid();
     }
     bool IsAccountIdValid()
     {
@@ -115,6 +124,10 @@
     bool IsValueValid()
     {
         return transValue > 0;
+    }
+    bool IsDescriptionValid()
+    {
+        return !string.IsNullOrEmpty(transDescription) || !string.IsNullOrWhiteSpace(transDescription);
     }
     void Reset()
     {
