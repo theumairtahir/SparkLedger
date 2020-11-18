@@ -6,7 +6,7 @@ namespace TechFlurry.SparkLedger.BusinessDomain.Info
     {
         public Company()
         {
-            CompanyName = "Tec-Flurry";
+            CompanyName = "Tech-Flurry";
             EstablishedYear = "2020";
             LogoPath = "/";
             Website = "https://www.techflurry.co/";

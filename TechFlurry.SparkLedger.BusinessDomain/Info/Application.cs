@@ -6,8 +6,8 @@ namespace TechFlurry.SparkLedger.BusinessDomain.Info
     {
         public Application()
         {
-            AppName = "Spark Ledger";
-            Version = "Dev 1.0";
+            AppName = "Spark Diary";
+            Version = "Beta 1.0";
             Build = 1;
         }
 
