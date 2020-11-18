@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace TechFlurry.SparkLedger.Shared.Common
@@ -32,6 +34,21 @@ namespace TechFlurry.SparkLedger.Shared.Common
             {
                 action.Invoke();
             }), null, delay, interval);
+        }
+        public static string ValueToId(long value)
+        {
+            var parts = new List<string>();
+            long numberPart = value % 10000;
+            parts.Add(numberPart.ToString("0000"));
+            value /= 10000;
+            var alphaParts = new List<string>();
+            for (int i = 0; i < 3 || value > 0; ++i)
+            {
+                alphaParts.Add(((char)(65 + (value % 26))).ToString());
+                value /= 26;
+            }
+            parts.Add(string.Join("", alphaParts));
+            return string.Join("-", parts.AsEnumerable().Reverse().ToArray());
         }
     }
 }

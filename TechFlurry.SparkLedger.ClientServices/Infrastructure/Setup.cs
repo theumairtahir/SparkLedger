@@ -13,7 +13,7 @@ namespace TechFlurry.SparkLedger.ClientServices.Infrastructure
             services.AddIndexedDB(dbStore =>
             {
                 dbStore.DbName = "SparkLedgerDb"; //example name
-                dbStore.Version = 1;
+                dbStore.Version = 7;
 
                 dbStore.Stores.Add(new StoreSchema
                 {
@@ -22,6 +22,44 @@ namespace TechFlurry.SparkLedger.ClientServices.Infrastructure
                     Indexes = new List<IndexSpec>
                     {
                         new IndexSpec{Name="value", KeyPath = "value", Auto=false}
+                    }
+                });
+
+                dbStore.Stores.Add(new StoreSchema
+                {
+                    Name = "LedgerItems",
+                    PrimaryKey = new IndexSpec { Name = "id", KeyPath = "id", Auto = true, Unique=true },
+                    Indexes = new List<IndexSpec>
+                    {
+                        new IndexSpec{Name="name", KeyPath = "name", Auto=false},
+                        new IndexSpec{Name="category", KeyPath = "category", Auto=false}
+                    }
+                });
+                dbStore.Stores.Add(new StoreSchema
+                {
+                    Name = "LedgerAccounts",
+                    PrimaryKey = new IndexSpec { Name = "id", KeyPath = "id", Auto = true, Unique = true },
+                    Indexes = new List<IndexSpec>
+                    {
+                        new IndexSpec{Name="code", KeyPath = "code", Auto=false},
+                        new IndexSpec{Name="title", KeyPath = "title", Auto=false},
+                        new IndexSpec{Name="category", KeyPath = "category", Auto=false},
+                        new IndexSpec{Name="phone", KeyPath = "phone", Auto=false},
+                        new IndexSpec{Name="description", KeyPath = "description", Auto=false}
+                    }
+                });
+                dbStore.Stores.Add(new StoreSchema
+                {
+                    Name = "LedgerActivites",
+                    PrimaryKey = new IndexSpec { Name = "id", KeyPath = "id", Auto = true, Unique = true },
+                    Indexes = new List<IndexSpec>
+                    {
+                        new IndexSpec{Name="accountId", KeyPath = "accountId", Auto=false},
+                        new IndexSpec{Name="itemId", KeyPath = "itemId", Auto=false},
+                        new IndexSpec{Name="transactionType", KeyPath = "transactionType", Auto=false},
+                        new IndexSpec{Name="value", KeyPath = "value", Auto=false},
+                        new IndexSpec{Name="code", KeyPath = "code", Auto=false},
+                        new IndexSpec{Name="activityTime", KeyPath = "activityTime", Auto=false}
                     }
                 });
             });

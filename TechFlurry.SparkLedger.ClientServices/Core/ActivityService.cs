@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using TechFlurry.SparkLedger.ApplicationDomain.Elements;
 using TechFlurry.SparkLedger.ApplicationDomain.EventArgs;
 using TechFlurry.SparkLedger.BusinessDomain.Enums;
+using TechFlurry.SparkLedger.BusinessDomain.ViewModels;
 using TechFlurry.SparkLedger.ClientServices.Abstractions;
+using TechFlurry.SparkLedger.Shared.Common;
+using TG.Blazor.IndexedDB;
 
 namespace TechFlurry.SparkLedger.ClientServices.Core
 {
@@ -12,23 +17,36 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
         List<TimelineActivityModel> TimelineActivities { get; }
         int TotalTransactions { get; }
         string NewCode { get; }
+        List<DropDownModel<long>> TransactionItems { get; }
+        List<DropDownModel<long>> LedgerAccounts { get; }
+        decimal TotalCurrency { get; }
+        decimal TotalGoods { get; }
+        int CurrencyIncrease { get; }
+        int GoodsIncrease { get; }
 
         event EventHandler<SuccessfullOperationEventArgs> OnSuccessAddNew;
         event EventHandler<ErrorOperationEventArgs> OnErrorAddNew;
 
-        void AddNewActivity(long accountId, long itemId, TransactionType transactionType, decimal value);
-        List<DropDownModel<long>> GetLedgerAccounts();
-        List<DropDownModel<long>> GetTransactionItems();
+        void AddNewActivity(long accountId, long itemId, TransactionType transactionType, decimal value, string description);
+        void GetLedgerAccounts(long itemId);
+        void GetTransactionItemsAsync();
         void Init();
         void LoadMainActivity(DateTime startDate, DateTime endDate);
         void LoadMainActivity(DateTime startDate, DateTime endDate, LedgerCategories ledgerCategory);
+        void LoadNewCode();
+        void LoadSummary();
     }
 
     internal class ActivityService : IActivityService
     {
-        public ActivityService()
+        private readonly IndexedDBManager _dbManager;
+
+        public ActivityService(IndexedDBManager dbManager)
         {
             TimelineActivities = new List<TimelineActivityModel>();
+            _dbManager = dbManager;
+            TransactionItems = new List<DropDownModel<long>>();
+            LedgerAccounts = new List<DropDownModel<long>>();
         }
         public List<TimelineActivityModel> TimelineActivities { get; private set; }
         public int TotalTransactions { get; private set; }
@@ -39,168 +57,281 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
         public void Init()
         {
             LoadMainActivity(DateTime.Today, DateTime.Now);
-            TotalTransactions = 100;
-            NewCode = "#XRS-45670";
+            TotalTransactions = 0;
+            LoadTotalTransactions();
+            LoadSummary();
+        }
+        private async void LoadTotalTransactions()
+        {
+            var count = (await _dbManager.GetRecords<ActivityModel>("LedgerActivites")).Count;
+            TotalTransactions = count;
             OnValueUpdate.Invoke(this, new OnUpdateEventArgs
             {
                 CallerType = GetType(),
-                CallingMethod = nameof(Init),
+                CallingMethod = nameof(LoadTotalTransactions),
                 CallingObject = this
             });
         }
-        public List<DropDownModel<long>> GetLedgerAccounts()
+        public async void LoadNewCode()
         {
-            List<DropDownModel<long>> model = new List<DropDownModel<long>>();
-            model.Add(new DropDownModel<long>
+            var lastRecord = (await _dbManager.GetRecords<ActivityModel>("LedgerActivites")).LastOrDefault();
+            var prevId = lastRecord != null ? lastRecord.Id + 1 : 1;
+            NewCode = $"#{Functions.ValueToId(prevId)}".ToUpper();
+            OnValueUpdate.Invoke(this, new OnUpdateEventArgs
             {
-                Text = "101000100-Dodh Wala",
-                Value = 1
+                CallerType = GetType(),
+                CallingMethod = nameof(LoadNewCode),
+                CallingObject = this
             });
-            model.Add(new DropDownModel<long>
-            {
-                Text = "101000102-Sabzi Wala",
-                Value = 2
-            });
-            model.Add(new DropDownModel<long>
-            {
-                Text = "101000103-Muhammad Ahmad",
-                Value = 3
-            });
-            return model;
         }
-        public List<DropDownModel<long>> GetTransactionItems()
+        public List<DropDownModel<long>> LedgerAccounts { get; private set; }
+        public async void GetLedgerAccounts(long itemId)
         {
-            List<DropDownModel<long>> model = new List<DropDownModel<long>>();
-            model.Add(new DropDownModel<long>
+            var category = (await _dbManager.GetRecordById<long, LedgerItemModel>("LedgerItems", itemId)).Category;
+            List<DropDownModel<long>> model = (await _dbManager.GetRecords<LedgerAccountModel>("LedgerAccounts"))
+                                                        .Where(x => x.Category == category)
+            .Select(x => new DropDownModel<long>
             {
-                Text = "Rupees",
-                Value = 1
-            });
-            model.Add(new DropDownModel<long>
+                Text = x.Code + "-" + x.Title,
+                Value = x.Id
+            }).ToList();
+            LedgerAccounts = model;
+            OnValueUpdate.Invoke(this, new OnUpdateEventArgs
             {
-                Text = "Goods",
-                Value = 2
+                CallerType = GetType(),
+                CallingMethod = nameof(GetLedgerAccounts),
+                CallingObject = this
             });
-            return model;
+        }
+        public List<DropDownModel<long>> TransactionItems { get; private set; }
+        public async void GetTransactionItemsAsync()
+        {
+            List<DropDownModel<long>> model = (await _dbManager.GetRecords<LedgerItemModel>("LedgerItems")).Select(x => new DropDownModel<long>
+            {
+                Text = x.ItemName,
+                Value = x.Id
+            }).ToList();
+            TransactionItems = model;
+            OnValueUpdate.Invoke(this, new OnUpdateEventArgs
+            {
+                CallerType = GetType(),
+                CallingMethod = nameof(GetTransactionItemsAsync),
+                CallingObject = this
+            });
         }
         public void LoadMainActivity(DateTime startDate, DateTime endDate)
         {
-            TimelineActivities = new List<TimelineActivityModel>();
-            TimelineActivities.Add(new TimelineActivityModel
+            Functions.RunOnThread(async () =>
             {
-                ActivityCode = "#x773s",
-                Color = ApplicationDomain.Enums.Colors.danger,
-                DateTime = DateTime.Now.AddMinutes(-120).ToString("dd/MMM HH:mm"),
-                Description = "Gave 150 rupees to Abdul Shakoor",
-                Id = 1,
-                IsBold = true
-            });
-            TimelineActivities.Add(new TimelineActivityModel
-            {
-                ActivityCode = "#xc273z",
-                Color = ApplicationDomain.Enums.Colors.success,
-                DateTime = DateTime.Now.AddDays(-12).ToString("dd/MMM HH:mm"),
-                Description = "Got 1000 rupees from Majid",
-                Id = 2,
-                IsBold = true
-            });
-            TimelineActivities.Add(new TimelineActivityModel
-            {
-                ActivityCode = "#x773s",
-                Color = ApplicationDomain.Enums.Colors.success,
-                DateTime = DateTime.Now.AddMinutes(-1200).ToString("dd/MMM HH:mm"),
-                Description = "Gave 150 rupees to Abdul Shakoor",
-                Id = 3,
-                IsBold = true
-            });
-            TimelineActivities.Add(new TimelineActivityModel
-            {
-                ActivityCode = "#x773s",
-                Color = ApplicationDomain.Enums.Colors.danger,
-                DateTime = DateTime.Now.AddDays(-120).ToString("dd/MMM HH:mm"),
-                Description = "Gave 150 rupees to Abdul Shakoor",
-                Id = 4,
-                IsBold = true
-            });
-            TimelineActivities.Add(new TimelineActivityModel
-            {
-                ActivityCode = "#x773s",
-                Color = ApplicationDomain.Enums.Colors.danger,
-                DateTime = DateTime.Now.AddDays(-1).ToString("dd/MMM HH:mm"),
-                Description = "Gave 150 rupees to Abdul Shakoor",
-                Id = 1,
-                IsBold = true
-            });
-            OnValueUpdate.Invoke(this, new OnUpdateEventArgs
-            {
-                CallerType = GetType(),
-                CallingMethod = nameof(LoadMainActivity),
-                CallingObject = this
+                var activites = (await GetActivitesAsync(startDate, endDate))
+                                                        .Select(x => new TimelineActivityModel
+                                                        {
+                                                            ActivityCode = x.Code,
+                                                            Id = x.Id,
+                                                            Color = x.TransactionType == TransactionType.In ? ApplicationDomain.Enums.Colors.success : ApplicationDomain.Enums.Colors.danger,
+                                                            DateTime = x.ActivityTime.ToString("dd/MMM HH:mm"),
+                                                            IsBold = x.TransactionType == TransactionType.Out
+                                                        }).ToList();
+                activites.ForEach(async x =>
+                {
+                    x.Description = await GetActivityDescriptionAsync(x.Id);
+                    OnValueUpdate.Invoke(this, new OnUpdateEventArgs
+                    {
+                        CallerType = GetType(),
+                        CallingMethod = nameof(LoadMainActivity),
+                        CallingObject = this
+                    });
+                });
+                TimelineActivities = activites;
+                OnValueUpdate.Invoke(this, new OnUpdateEventArgs
+                {
+                    CallerType = GetType(),
+                    CallingMethod = nameof(LoadMainActivity),
+                    CallingObject = this
+                });
             });
         }
         public void LoadMainActivity(DateTime startDate, DateTime endDate, LedgerCategories ledgerCategory)
         {
-            TimelineActivities = new List<TimelineActivityModel>();
-            TimelineActivities.Add(new TimelineActivityModel
+            Functions.RunOnThread(async () =>
             {
-                ActivityCode = "#x773s",
-                Color = ApplicationDomain.Enums.Colors.danger,
-                DateTime = DateTime.Now.AddMinutes(-120).ToString("dd/MMM HH:mm"),
-                Description = "Gave 150 rupees to Abdul Shakoor",
-                Id = 1,
-                IsBold = true
+                var items = (await _dbManager.GetRecords<LedgerItemModel>("LedgerItems")).Where(x => x.Category == ledgerCategory).ToList();
+                TimelineActivities = new List<TimelineActivityModel>();
+                foreach (var item in items)
+                {
+                    var activites = (await GetActivitesAsync(startDate, endDate)).Where(x => x.ItemId == item.Id)
+                                                            .Select(x => new TimelineActivityModel
+                                                            {
+                                                                ActivityCode = x.Code,
+                                                                Id = x.Id,
+                                                                Color = x.TransactionType == TransactionType.In ? ApplicationDomain.Enums.Colors.success : ApplicationDomain.Enums.Colors.danger,
+                                                                DateTime = x.ActivityTime.ToString("dd/MMM HH:mm"),
+                                                                IsBold = x.TransactionType == TransactionType.Out
+                                                            }).ToList();
+                    activites.ForEach(async x =>
+                    {
+                        x.Description = await GetActivityDescriptionAsync(x.Id);
+                        OnValueUpdate.Invoke(this, new OnUpdateEventArgs
+                        {
+                            CallerType = GetType(),
+                            CallingMethod = nameof(LoadMainActivity),
+                            CallingObject = this
+                        });
+                    });
+                    TimelineActivities.AddRange(activites);
+                }
+                OnValueUpdate.Invoke(this, new OnUpdateEventArgs
+                {
+                    CallerType = GetType(),
+                    CallingMethod = nameof(LoadMainActivity),
+                    CallingObject = this
+                });
             });
-            TimelineActivities.Add(new TimelineActivityModel
+        }
+        public int CurrencyIncrease { get; private set; }
+        public int GoodsIncrease { get; private set; }
+        public decimal TotalCurrency { get; private set; }
+        public decimal TotalGoods { get; private set; }
+        public async void LoadSummary()
+        {
+            var activities = await _dbManager.GetRecords<ActivityModel>("LedgerActivites");
+            var items = await _dbManager.GetRecords<LedgerItemModel>("LedgerItems");
+            var currencyItems = items.Where(x => x.Category == LedgerCategories.Currency).ToList();
+            var goodsItems = items.Where(x => x.Category == LedgerCategories.Goods);
+            decimal? currencyTodayTotal = activities
+                                                .Where(x => currencyItems.Any(y => x.ItemId == y.Id) && x.ActivityTime >= DateTime.Today
+                                                        && x.ActivityTime < DateTime.Today.AddDays(1))
+                                                ?.Sum(x =>
+                                                {
+                                                    return x.TransactionType == TransactionType.In ? x.Value : -1 * x.Value;
+                                                });
+            decimal? goodsTodayTotal = activities
+                                                .Where(x => goodsItems.Any(y => x.ItemId == y.Id) && x.ActivityTime >= DateTime.Today
+                                                        && x.ActivityTime < DateTime.Today.AddDays(1))
+                                                ?.Sum(x =>
+                                                {
+                                                    return x.TransactionType == TransactionType.In ? x.Value : -1 * x.Value;
+                                                });
+            decimal? currencyYesterdayTotal = activities
+                                                .Where(x => currencyItems.Any(y => x.ItemId == y.Id) && x.ActivityTime >= DateTime.Today.AddDays(-1)
+                                                        && x.ActivityTime < DateTime.Today)
+                                                ?.Sum(x =>
+                                                {
+                                                    return x.TransactionType == TransactionType.In ? x.Value : -1 * x.Value;
+                                                });
+            decimal? goodsYesterdayTotal = activities
+                                                .Where(x => goodsItems.Any(y => x.ItemId == y.Id) && x.ActivityTime >= DateTime.Today.AddDays(-1)
+                                                        && x.ActivityTime < DateTime.Today)
+                                                ?.Sum(x =>
+                                                {
+                                                    return x.TransactionType == TransactionType.In ? x.Value : -1 * x.Value;
+                                                });
+            if (currencyTodayTotal > currencyYesterdayTotal)
             {
-                ActivityCode = "#xc273z",
-                Color = ApplicationDomain.Enums.Colors.success,
-                DateTime = DateTime.Now.AddDays(-12).ToString("dd/MMM HH:mm"),
-                Description = "Got 1000 rupees from Majid",
-                Id = 2,
-                IsBold = true
-            });
-            TimelineActivities.Add(new TimelineActivityModel
+                try
+                {
+                    CurrencyIncrease = (int)decimal.Round((currencyTodayTotal / currencyYesterdayTotal) ?? 0 * 100);
+                }
+                catch (DivideByZeroException)
+                {
+                    CurrencyIncrease = 0;
+                }
+            }
+            else
             {
-                ActivityCode = "#x773s",
-                Color = ApplicationDomain.Enums.Colors.success,
-                DateTime = DateTime.Now.AddMinutes(-1200).ToString("dd/MMM HH:mm"),
-                Description = "Gave 150 rupees to Abdul Shakoor",
-                Id = 3,
-                IsBold = true
-            });
-            TimelineActivities.Add(new TimelineActivityModel
+                try
+                {
+                    CurrencyIncrease = (int)decimal.Round((currencyYesterdayTotal / currencyTodayTotal) ?? 0 * 100) * -1;
+                }
+                catch (DivideByZeroException)
+                {
+                    CurrencyIncrease = 0;
+                }
+            }
+            if (goodsTodayTotal > goodsYesterdayTotal)
             {
-                ActivityCode = "#x773s",
-                Color = ApplicationDomain.Enums.Colors.danger,
-                DateTime = DateTime.Now.AddDays(-120).ToString("dd/MMM HH:mm"),
-                Description = "Gave 150 rupees to Abdul Shakoor",
-                Id = 4,
-                IsBold = true
-            });
-            TimelineActivities.Add(new TimelineActivityModel
+                try
+                {
+                    GoodsIncrease = (int)decimal.Round((goodsTodayTotal / goodsYesterdayTotal) ?? 0 * 100);
+                }
+                catch (DivideByZeroException)
+                {
+                    GoodsIncrease = 0;
+                }
+            }
+            else
             {
-                ActivityCode = "#x773s",
-                Color = ApplicationDomain.Enums.Colors.danger,
-                DateTime = DateTime.Now.AddDays(-1).ToString("dd/MMM HH:mm"),
-                Description = "Gave 150 rupees to Abdul Shakoor",
-                Id = 1,
-                IsBold = true
-            });
+                try
+                {
+                    GoodsIncrease = (int)decimal.Round((goodsYesterdayTotal / goodsTodayTotal) ?? 0 * 100) * -1;
+                }
+                catch (DivideByZeroException) { GoodsIncrease = 0; }
+            }
+            TotalCurrency = currencyTodayTotal ?? 0;
+            TotalGoods = goodsTodayTotal ?? 0;
             OnValueUpdate.Invoke(this, new OnUpdateEventArgs
             {
                 CallerType = GetType(),
-                CallingMethod = nameof(LoadMainActivity),
+                CallingMethod = nameof(LoadSummary),
                 CallingObject = this
             });
         }
-        public void AddNewActivity(long accountId, long itemId, TransactionType transactionType, decimal value)
+        private async Task<string> GetActivityDescriptionAsync(long id)
         {
-            OnSuccessAddNew.Invoke(this, new SuccessfullOperationEventArgs
+            var activity = await _dbManager.GetRecordById<long, ActivityModel>("LedgerActivites", id);
+            var account = await _dbManager.GetRecordById<long, LedgerAccountModel>("LedgerAccounts", activity.AccountId);
+            var item = await _dbManager.GetRecordById<long, LedgerItemModel>("LedgerItems", activity.ItemId);
+            return $"{(activity.TransactionType == TransactionType.In ? "Got" : "Gave")} {activity.Value} {item.ItemName} {(activity.TransactionType == TransactionType.In ? "from" : "to")} {account.Title}({account.Code}). Reason: {activity.Description}";
+        }
+        private async Task<List<ActivityModel>> GetActivitesAsync(DateTime startDate, DateTime endDate)
+        {
+            var data = await _dbManager.GetRecords<ActivityModel>("LedgerActivites");
+            data = data.Where(x => x.ActivityTime >= startDate && x.ActivityTime <= endDate).OrderByDescending(x => x.ActivityTime).ToList();
+            return data;
+        }
+        public void AddNewActivity(long accountId, long itemId, TransactionType transactionType, decimal value, string description)
+        {
+            Functions.RunOnThread(async () =>
             {
-                CallerType = GetType(),
-                CallingMethod = nameof(AddNewActivity),
-                CallingObject = this,
-                Message = "New activity has been added successfully"
+                try
+                {
+                    await _dbManager.AddRecord(new StoreRecord<ActivityModel>
+                    {
+                        Data = new ActivityModel
+                        {
+                            AccountId = accountId,
+                            Id = 0,
+                            ItemId = itemId,
+                            TransactionType = transactionType,
+                            Value = value,
+                            Code = NewCode,
+                            ActivityTime = DateTime.Now,
+                            Description = description
+                        },
+                        Storename = "LedgerActivites"
+                    });
+                    LoadTotalTransactions();
+                    OnSuccessAddNew.Invoke(this, new SuccessfullOperationEventArgs
+                    {
+                        CallerType = GetType(),
+                        CallingMethod = nameof(AddNewActivity),
+                        CallingObject = this,
+                        Message = "New activity has been added successfully"
+                    });
+                    Console.WriteLine($"Success: New activity has been added successfully");
+                    LoadSummary();
+                }
+                catch (Exception ex)
+                {
+                    OnErrorAddNew.Invoke(this, new ErrorOperationEventArgs
+                    {
+                        CallerType = GetType(),
+                        CallingMethod = nameof(AddNewActivity),
+                        CallingObject = this,
+                        Message = "Oops! something went wrong. Please contact to the administrator"
+                    });
+                    Console.WriteLine("Error: " + ex.Message);
+                }
             });
         }
     }

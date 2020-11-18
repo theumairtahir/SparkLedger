@@ -117,11 +117,11 @@
     }
     void OnGoodsPress()
     {
-        ActivityService.LoadMainActivity(DateTime.Today.AddYears(-1), DateTime.Now, LedgerCategories.Goods);
+        ActivityService.LoadMainActivity(DateTime.Today, DateTime.Now, LedgerCategories.Goods);
     }
     void OnCurrencyPress()
     {
-        ActivityService.LoadMainActivity(DateTime.Today.AddMonths(-1), DateTime.Now, LedgerCategories.Currency);
+        ActivityService.LoadMainActivity(DateTime.Today, DateTime.Now, LedgerCategories.Currency);
     }
     void UpdateUI()
     {

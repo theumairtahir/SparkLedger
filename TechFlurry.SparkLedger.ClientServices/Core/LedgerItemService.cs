@@ -2,6 +2,8 @@
 using TechFlurry.SparkLedger.ApplicationDomain.EventArgs;
 using TechFlurry.SparkLedger.BusinessDomain.ViewModels;
 using TechFlurry.SparkLedger.ClientServices.Abstractions;
+using TechFlurry.SparkLedger.Shared.Common;
+using TG.Blazor.IndexedDB;
 
 namespace TechFlurry.SparkLedger.ClientServices.Core
 {
@@ -15,18 +17,32 @@ namespace TechFlurry.SparkLedger.ClientServices.Core
 
     internal class LedgerItemService : ILedgerItemService
     {
+        private readonly IndexedDBManager _dbManager;
+
+        public LedgerItemService(IndexedDBManager dbManager)
+        {
+            _dbManager = dbManager;
+        }
         public event EventHandler<OnUpdateEventArgs> OnValueUpdate;
         public event EventHandler<SuccessfullOperationEventArgs> OnItemAdded;
         public event EventHandler<ErrorOperationEventArgs> OnItemAddError;
 
         public void AddNewItem(LedgerItemModel model)
         {
-            OnItemAdded.Invoke(this, new SuccessfullOperationEventArgs
+            Functions.RunOnThread(async () =>
             {
-                CallerType = GetType(),
-                CallingMethod = nameof(AddNewItem),
-                CallingObject = this,
-                Message = "Item added successfully"
+                await _dbManager.AddRecord(new StoreRecord<LedgerItemModel>
+                {
+                    Data = model,
+                    Storename = "LedgerItems"
+                });
+                OnItemAdded.Invoke(this, new SuccessfullOperationEventArgs
+                {
+                    CallerType = GetType(),
+                    CallingMethod = nameof(AddNewItem),
+                    CallingObject = this,
+                    Message = "Item added successfully"
+                });
             });
         }
     }

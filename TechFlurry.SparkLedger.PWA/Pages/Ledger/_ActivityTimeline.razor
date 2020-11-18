@@ -9,6 +9,12 @@
                 <span class="font-weight-bolder text-dark"> Activity</span>
                 <span class="text-muted mt-3 font-weight-bold font-size-sm">Total @Service.TotalTransactions Transactions</span>
             </h3>
+            <h6>
+                <span class="font-weight-bolder text-dark">Currency Today: </span>
+                <span class="text-@(Service.TotalCurrency>0?"success":Service.TotalCurrency<0?"danger":"warning") mt-3 font-weight-bold font-size-sm">@Service.TotalCurrency</span>
+                <span class="font-weight-bolder text-dark ml-3">Goods Today: </span>
+                <span class="text-@(Service.TotalGoods>0?"success":Service.TotalGoods<0?"danger":"warning") mt-3 font-weight-bold font-size-sm">@Service.TotalGoods</span>
+            </h6>
             <!--<div class="card-toolbar">
                 <div class="dropdown dropdown-inline">
                     <a href="#" class="btn btn-clean btn-hover-light-primary btn-sm btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -97,6 +103,7 @@
         {
             Service.OnValueUpdate += OnValueUpdate;
             Service.Init();
+            Service.LoadNewCode();
         }
         return base.OnAfterRenderAsync(firstRender);
     }
@@ -112,7 +119,7 @@
         DateTime.TryParseExact(endDate, "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture,
                            System.Globalization.DateTimeStyles.None,
                            out DateTime eDate);
-        _service.LoadMainActivity(sDate, eDate);
+        _service.LoadMainActivity(sDate, eDate.AddDays(1).AddSeconds(-1));
     }
     void UpdateUI()
     {

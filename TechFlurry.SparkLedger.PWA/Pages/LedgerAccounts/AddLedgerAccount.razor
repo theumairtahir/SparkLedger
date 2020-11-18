@@ -102,10 +102,7 @@
 @functions{
     void Submit()
     {
-        if (!((string.IsNullOrEmpty(accountTitle) || string.IsNullOrWhiteSpace(accountTitle)) || (string.IsNullOrEmpty(phoneNumber) || string.IsNullOrWhiteSpace(phoneNumber))))
-        {
-            LedgerAccountService.AddNewAccount(accountTitle, LedgerAccountService.NewAccountCode, category, phoneNumber);
-        }
+        LedgerAccountService.AddNewAccount(accountTitle, LedgerAccountService.NewAccountCode, category, phoneNumber);
     }
     void Reset()
     {
